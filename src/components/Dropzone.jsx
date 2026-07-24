@@ -46,7 +46,7 @@ export function Dropzone({
     : "border-slate-300 bg-slate-50"
   return (
     <div
-      className={`flex flex-col justify-center items-center gap-4 w-full h-96 p-8 text-center rounded cursor-pointer transition border-2 border-dashed text-accent hover:bg-blue-50 ${dropzoneStyle}`}
+      className={`flex flex-col justify-center items-center gap-4 w-full h-96 p-8 text-center rounded cursor-pointer transition border-2 border-dashed text-slate-800 hover:bg-blue-50 ${dropzoneStyle}`}
       {...getRootProps()}
     >
       <input {...getInputProps()} />
