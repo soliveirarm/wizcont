@@ -8,3 +8,9 @@
 @theme {
   --color-accent: #002c4d;
 }
+
+#app {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}

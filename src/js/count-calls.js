@@ -1,49 +1,49 @@
-export const processData = (
-  data,
+import { convertToSeconds } from "./convert-to-seconds"
+
+export const countCalls = (
+  csvFile,
   setMessage,
-  setTextResult,
-  reportDates,
-  setReportDates,
+  setClipboard,
+  report,
+  setReport,
+  setIsModalOpen,
 ) => {
-  const filteredData = data.filter((row) => {
-    const type = row["Type"] || ""
-    return !type.includes("Perdida")
+  const validCalls = csvFile.filter((row) => {
+    const type = row["CallType"] || ""
+    return !type.includes("Missed")
   })
 
-  const groupByDate = {}
+  const callsByDate = {}
 
-  filteredData.forEach((row) => {
-    if (!row["Date"] || !row["Duration(secs)"]) return
+  validCalls.forEach((row) => {
+    if (!row["Date"] || !row["Duration"]) return
 
     const [date, time] = row["Date"].split(" ")
     if (!date || !time) return
 
-    const [day, month, year] = date.split("/")
-
-    const keyDate = `${year}-${month}-${day}`
-    const dateISO = new Date(`${keyDate}T${time}`)
+    const dateISO = new Date(`${date}T${time}`)
 
     if (isNaN(dateISO.getTime())) return
 
-    if (!groupByDate[keyDate]) groupByDate[keyDate] = []
+    if (!callsByDate[date]) callsByDate[date] = []
 
-    groupByDate[keyDate].push({
+    callsByDate[date].push({
       ...row,
       dateObj: dateISO,
-      duration: parseInt(row["Duration(secs)"], 10) || 0,
+      duration: convertToSeconds(row["Duration"]),
     })
   })
 
   const rowResults = []
-  const datesReport = []
-  const sortedDates = Object.keys(groupByDate).sort()
+  const sortedDates = Object.keys(callsByDate).sort()
 
   sortedDates.forEach((date) => {
-    const group = groupByDate[date]
+    const group = callsByDate[date]
     group.sort((a, b) => a.dateObj - b.dateObj)
 
+    const longCalls = group.filter((r) => r.duration >= 90)
     const col1 = group.filter((r) => r.duration >= 30 && r.duration < 90).length
-    const col2 = group.filter((r) => r.duration >= 90).length
+    const col2 = longCalls.length
     const col3 = group.filter((r) => r.duration < 30).length
 
     const firstCallTime = group[0].dateObj.toLocaleTimeString("pt-BR", {
@@ -55,7 +55,6 @@ export const processData = (
       { hour: "2-digit", minute: "2-digit" },
     )
 
-    const longCalls = group.filter((r) => r.duration > 90)
     const between = longCalls.filter((r) => {
       const timeInMinutes = r.dateObj.getHours() * 60 + r.dateObj.getMinutes()
       return timeInMinutes >= 690 && timeInMinutes <= 750 // Entre 11:30 e 12:30
@@ -64,21 +63,33 @@ export const processData = (
     const col5 = between.length
     const col6 = longCalls.length - col5
 
-    const linha = `${col1}\t${col2}\t${col3}\t${firstCallTime}\t${col5}\t${col6}\t${lastCallTime}`
-    rowResults.push(linha)
+    const dayCount = `${col1}\t${col2}\t${col3}\t${firstCallTime}\t${col5}\t${col6}\t${lastCallTime}`
+    rowResults.push(dayCount)
 
     const [year, month, day] = date.split("-")
-    datesReport.push(`${day}/${month}/${year}`)
+    setReport((prevReport) => [
+      ...prevReport,
+      [
+        `${day}/${month}/${year}`,
+        col1,
+        col2,
+        col3,
+        firstCallTime,
+        col5,
+        col6,
+        lastCallTime,
+      ],
+    ])
   })
 
   const finalResult = rowResults.join("\n")
-  setTextResult(finalResult)
+  setClipboard(finalResult)
 
   navigator.clipboard
     .writeText(finalResult)
     .then(() => {
-      setMessage("Dados copiados para a área de transferência.")
+      setMessage("Dados copiados para a área de transferência!")
     })
     .catch("Processado com sucesso! Cole o texto manualmente.")
-    .finally(() => setReportDates(reportDates.join(", ")))
+    .finally(() => setIsModalOpen(true))
 }
