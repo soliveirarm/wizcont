@@ -35,7 +35,7 @@ export function Modal({
       open
       className="fixed inset-0 bg-black/60 flex items-center justify-center p-4"
     >
-      <div className="bg-white p-4 rounded flex flex-col items-center gap-4">
+      <div className="max-h-[90%] bg-white p-4 rounded flex flex-col items-center gap-4">
         <button
           onClick={handleClose}
           className="self-end cursor-pointer transition hover:scale-120 text-accent hover:text-red-600"

@@ -14,7 +14,7 @@ export function App() {
     <>
       <Header />
 
-      <main className="flex-1 grid place-items-center gap-8 mt-12 max-w-3xl w-full mx-auto p-4">
+      <main className="flex-1 grid place-items-center gap-8 max-w-3xl w-full mx-auto p-4">
         <Dropzone
           setMessage={setMessage}
           setClipboard={setClipboard}
@@ -33,7 +33,6 @@ export function App() {
         report={report}
         setReport={setReport}
       />
-
       <Footer />
     </>
   )
