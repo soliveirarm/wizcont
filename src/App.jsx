@@ -3,12 +3,17 @@ import { Header } from "./components/Header"
 import { Dropzone } from "./components/Dropzone"
 import { Modal } from "./components/Modal"
 import { Footer } from "./components/Footer"
+import { TutorialModal } from "./components/TutorialModal"
+import { OpenTutorialButton } from "./components/OpenTutorialButton"
 
 export function App() {
   const [message, setMessage] = useState("")
   const [clipboard, setClipboard] = useState("")
   const [report, setReport] = useState([])
   const [isModalOpen, setIsModalOpen] = useState(false)
+  const [isTutorialModalOpen, setIsTutorialModalOpen] = useState(false)
+
+  const openTutorialModal = () => setIsTutorialModalOpen(true)
 
   return (
     <>
@@ -33,7 +38,18 @@ export function App() {
         report={report}
         setReport={setReport}
       />
+
+      <TutorialModal
+        isOpen={isTutorialModalOpen}
+        setIsOpen={setIsTutorialModalOpen}
+      />
+
       <Footer />
+
+      <OpenTutorialButton
+        onClick={openTutorialModal}
+        isTutorialModalOpen={isTutorialModalOpen}
+      />
     </>
   )
 }

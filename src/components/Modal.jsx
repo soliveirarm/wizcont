@@ -1,10 +1,11 @@
 import { useState } from "react"
-import { CircleX } from "lucide-react"
 import { PiCheckCircleFill } from "react-icons/pi"
 import { Table } from "./Table"
+import { ModalBox } from "./ModalBox"
+import { CloseButton } from "./CloseButton"
 
 export function Modal({
-  isOpen = true,
+  isOpen,
   setIsOpen,
   message,
   clipboard,
@@ -31,18 +32,12 @@ export function Modal({
   if (!isOpen) return
 
   return (
-    <div
-      open
-      className="fixed inset-0 bg-black/60 flex items-center justify-center p-4"
-    >
+    <ModalBox>
       <div className="max-h-[90%] bg-white p-4 rounded flex flex-col items-center gap-4">
-        <button
-          onClick={handleClose}
-          className="self-end cursor-pointer transition hover:scale-120 text-accent hover:text-red-600"
+        <CloseButton
           title="Fechar e limpar área de transferência"
-        >
-          <CircleX />
-        </button>
+          onClick={handleClose}
+        />
 
         <PiCheckCircleFill size={64} className="text-green-600" />
         <h2 className="text-xl font-semibold">{message}</h2>
@@ -54,6 +49,6 @@ export function Modal({
           {!isClicked ? "Copiar" : "Copiado!"}
         </button>
       </div>
-    </div>
+    </ModalBox>
   )
 }
